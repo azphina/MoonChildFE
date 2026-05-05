@@ -20,7 +20,6 @@ elseif(MOONCHILD_TARGET_ARCH STREQUAL "WindowsX86")
     set(CMAKE_CXX_FLAGS_INIT "--target=i686-pc-windows-msvc")
     set(CMAKE_EXE_LINKER_FLAGS_INIT "--target=i686-pc-windows-msvc")
     set(CMAKE_SHARED_LINKER_FLAGS_INIT "--target=i686-pc-windows-msvc")
-
 else()
     message(FATAL_ERROR "Unsupported Windows target architecture: ${MOONCHILD_TARGET_ARCH}")
 endif()

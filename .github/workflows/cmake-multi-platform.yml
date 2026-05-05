@@ -25,23 +25,23 @@ jobs:
           - name: Windows x64
             os: windows-latest
             msvc_dev_arch: x64
-            configure_preset: windowsx64-release
+            configure_preset: windowsx64
             build_preset: build-windowsx64-release
             artifact_platform: WindowsX64
           - name: Windows x86
             os: windows-latest
             msvc_dev_arch: amd64_x86
-            configure_preset: windowsx86-release
+            configure_preset: windowsx86
             build_preset: build-windowsx86-release
             artifact_platform: WindowsX86
           - name: Linux x64
             os: ubuntu-latest
-            configure_preset: linuxx64-release
+            configure_preset: linuxx64
             build_preset: build-linuxx64-release
             artifact_platform: LinuxX64
           - name: Web
             os: ubuntu-latest
-            configure_preset: web-release
+            configure_preset: web
             build_preset: build-web-release
             artifact_platform: Web
             emscripten: true

@@ -5,61 +5,35 @@ setlocal EnableDelayedExpansion
 set "CONFIG=Debug"
 set "ARCH_EXPORT=WindowsX64"
 set "PRESET_BASE=windowsx64"
-set "PRESET=!PRESET_BASE!-debug"
+set "PRESET=!PRESET_BASE!"
 set "BUILD_PRESET=build-!PRESET_BASE!-debug"
 set "VS_ARCH=x64"
 
 for %%A in (%*) do (
     if /I "%%A"=="Release" (
         set "CONFIG=Release"
-        set "PRESET=!PRESET_BASE!-release"
         set "BUILD_PRESET=build-!PRESET_BASE!-release"
     ) else if /I "%%A"=="Debug" (
         set "CONFIG=Debug"
-        set "PRESET=!PRESET_BASE!-debug"
         set "BUILD_PRESET=build-!PRESET_BASE!-debug"
     ) else if /I "%%A"=="WindowsX86" (
         set "ARCH_EXPORT=WindowsX86"
         set "PRESET_BASE=windowsx86"
+        set "PRESET=!PRESET_BASE!"
         set "VS_ARCH=x86"
         if /I "!CONFIG!"=="Release" (
-            set "PRESET=!PRESET_BASE!-release"
             set "BUILD_PRESET=build-!PRESET_BASE!-release"
         ) else (
-            set "PRESET=!PRESET_BASE!-debug"
-            set "BUILD_PRESET=build-!PRESET_BASE!-debug"
-        )
-    ) else if /I "%%A"=="WindowsX86" (
-        set "ARCH_EXPORT=WindowsX86"
-        set "PRESET_BASE=windowsx86"
-        set "VS_ARCH=x86"
-        if /I "!CONFIG!"=="Release" (
-            set "PRESET=!PRESET_BASE!-release"
-            set "BUILD_PRESET=build-!PRESET_BASE!-release"
-        ) else (
-            set "PRESET=!PRESET_BASE!-debug"
             set "BUILD_PRESET=build-!PRESET_BASE!-debug"
         )
     ) else if /I "%%A"=="WindowsX64" (
         set "ARCH_EXPORT=WindowsX64"
         set "PRESET_BASE=windowsx64"
+        set "PRESET=!PRESET_BASE!"
         set "VS_ARCH=x64"
         if /I "!CONFIG!"=="Release" (
-            set "PRESET=!PRESET_BASE!-release"
             set "BUILD_PRESET=build-!PRESET_BASE!-release"
         ) else (
-            set "PRESET=!PRESET_BASE!-debug"
-            set "BUILD_PRESET=build-!PRESET_BASE!-debug"
-        )
-    ) else if /I "%%A"=="WindowsX64" (
-        set "ARCH_EXPORT=WindowsX64"
-        set "PRESET_BASE=windowsx64"
-        set "VS_ARCH=x64"
-        if /I "!CONFIG!"=="Release" (
-            set "PRESET=!PRESET_BASE!-release"
-            set "BUILD_PRESET=build-!PRESET_BASE!-release"
-        ) else (
-            set "PRESET=!PRESET_BASE!-debug"
             set "BUILD_PRESET=build-!PRESET_BASE!-debug"
         )
     )
@@ -114,4 +88,4 @@ if %ERRORLEVEL% neq 0 (
     exit /b %ERRORLEVEL%
 )
 
-echo %R_OK%Build complete! ^(!ARCH_EXPORT! / !CONFIG!^).%R_0%
+echo %R_OK%Build complete! (%ARCH_EXPORT% / %CONFIG%).%R_0%

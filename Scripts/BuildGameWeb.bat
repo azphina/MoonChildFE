@@ -3,17 +3,15 @@ REM Usage: BuildGameWeb.bat [Debug|Release]
 setlocal EnableDelayedExpansion
 
 set "CONFIG=Debug"
-set "PRESET=web-debug"
+set "PRESET=web"
 set "BUILD_PRESET=build-web-debug"
 
 for %%A in (%*) do (
     if /I "%%A"=="Release" (
         set "CONFIG=Release"
-        set "PRESET=web-release"
         set "BUILD_PRESET=build-web-release"
     ) else if /I "%%A"=="Debug" (
         set "CONFIG=Debug"
-        set "PRESET=web-debug"
         set "BUILD_PRESET=build-web-debug"
     )
 )
@@ -61,4 +59,4 @@ if %ERRORLEVEL% neq 0 (
     exit /b %ERRORLEVEL%
 )
 
-echo %R_OK%Build complete! ^(Web / !CONFIG!^).%R_0%
+echo %R_OK%Build complete! (Web / %CONFIG%).%R_0%

@@ -28,10 +28,9 @@ done
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 PRESET_BASE="$(printf '%s' "$ARCH_EXPORT" | tr '[:upper:]' '[:lower:]')"
-PRESET="${PRESET_BASE}-debug"
+PRESET="${PRESET_BASE}"
 BUILD_PRESET="build-${PRESET_BASE}-debug"
 if [[ "$CONFIG" == "Release" ]]; then
-    PRESET="${PRESET_BASE}-release"
     BUILD_PRESET="build-${PRESET_BASE}-release"
 fi
 
