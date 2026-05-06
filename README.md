@@ -4,7 +4,7 @@ Moon Child FE (Friend Edition) is a modern source port of the 1997 Windows 95 cl
 
 Differences from the original Windows 95 release include (but not limited to):
 
-- Proper support for the latest Windows versions, as well as Linux
+- Proper support for the latest versions of Windows, Linux, and macOS
 - A full web version that you can play in your browser
 - Automatic saving and loading of progress
 - Controller support
@@ -12,9 +12,9 @@ Differences from the original Windows 95 release include (but not limited to):
 - Fullscreen and windowed display modes
 - 50FPS and 60FPS toggle, with Vsync support
 - Nice and shimmer-free image scaling
-- New Speedrun mode, which adds a speedrun timer to the top left corner of the screen
-- New Easier Shoot option, which makes the jetpack shooting controls more intuitive
-- New Safe Visuals mode, which makes the final level slightly easier on the eyes
+- Brand new Speedrun Mode, which adds a speedrun timer to the top left corner of the screen
+- Brand new Easier Shooting option, which makes the jetpack shooting controls more intuitive
+- Brand new Safe Visuals option, which makes the final level slightly easier on the eyes
 - Slightly higher quality audio
 - Alternate title screen music :D
 - Updated credits
@@ -88,7 +88,6 @@ The executable will be end up in the `Bin` folder.
 ### macOS
 
 1. Install the [Xcode Command Line Tools](https://developer.apple.com/documentation/xcode/installing-the-command-line-tools/) and [Homebrew](https://brew.sh/).
-
 2. Install CMake from Homebrew.
 
 ```bash
@@ -114,7 +113,7 @@ The executable will be end up in the `Bin` folder.
 
 ## Credits
 
-**Porting**: [Mors](https://mors.games)
+**Source Port Author**: [Mors](https://mors.games)
 
 **Original Game Code**: [Reinier van Vliet](https://www.proofofconcept.nl)
 
@@ -122,4 +121,6 @@ The executable will be end up in the `Bin` folder.
 
 **Original Game Music & Sounds**: [Ramon Braumuller](https://open.spotify.com/artist/6ljLO5A329ym1FARh4xAz4?si=I2-mmFi4Qq-CLNZvoku7Pw)
 
-**Special Thanks**: Eidolon, AlbertHamik, pyrox0, koluckirafal, SteelT1
+**Additional Contributions**: Eidolon, pyrox0, koluckirafal, SteelT1, WickedSmoke, novadragonDOTspace, azphina
+
+**Special Thanks**: Eidolon, AlbertHamik
