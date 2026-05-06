@@ -49,7 +49,7 @@ jobs:
             os: macos-latest
             configure_preset: macosuniversal
             build_preset: build-macosuniversal-release
-            artifact_platform: macOS
+            artifact_platform: macOSUniversal
 
     steps:
     - uses: actions/checkout@v4
