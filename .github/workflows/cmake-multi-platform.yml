@@ -45,6 +45,11 @@ jobs:
             build_preset: build-web-release
             artifact_platform: Web
             emscripten: true
+          - name: macOS
+            os: macos-latest
+            configure_preset: macosuniversal
+            build_preset: build-macosuniversal-release
+            artifact_platform: macOS
 
     steps:
     - uses: actions/checkout@v4
@@ -161,6 +166,12 @@ jobs:
         name: MoonChildFE-LinuxX64
         path: assets/LinuxX64
 
+    - name: Download the macOS Universal artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: MoonChildFE-macOSUniversal
+        path: assets/macOSUniversal
+
     - name: Packing things up
       run: |
         set -eux
@@ -168,6 +179,7 @@ jobs:
         (cd assets/WindowsX64 && zip -r "$GITHUB_WORKSPACE/dist/MoonChildFE-WindowsX64.zip" .)
         (cd assets/WindowsX86 && zip -r "$GITHUB_WORKSPACE/dist/MoonChildFE-WindowsX86.zip" .)
         (cd assets/LinuxX64 && tar -czf "$GITHUB_WORKSPACE/dist/MoonChildFE-LinuxX64.tar.gz" .)
+        (cd assets/macOSUniversal && zip -r "$GITHUB_WORKSPACE/dist/MoonChildFE-macOSUniversal.zip" .)
 
     - name: Create the GitHub Release
       uses: softprops/action-gh-release@v2
