@@ -63,7 +63,7 @@ struct LEVEL_DESCR
 struct SPEEDRUN_STATE
 {
   UINT32 gametime;
-  UINT32 leveltime[16];
+  UINT32 leveltime[17];
   bool running;
   bool level_complete;
 };

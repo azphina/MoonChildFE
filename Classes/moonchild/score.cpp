@@ -483,7 +483,7 @@ void score_display(VIEWPORT *player)
   frame->draw(*player->loadedmap->blitbuf,70 + (12*40) + ((sinus512[xcnt]*10)>>10) + scoreshift, 414 + ((sinus512[ycnt]*10)>>10) );
 #endif
 
-  if (speedrun_state.running)
+  if (speedrun_state.running && world != 4)
   {
     drawgametime(speedrun_state.gametime, *player->loadedmap->blitbuf, 0x10, 8, 8);
 

@@ -1054,42 +1054,45 @@ void load_options(void)
 {
   FILE *fp;
   size_t loadedbytes = 0;
+  size_t loadedslots = 0;
   memset(optsavebuf, 0, sizeof(optsavebuf));
   fp = fopen(FullWritablePath("mc_opts.dat"), "rb");
 
   if (fp)
   {
     loadedbytes = fread((char *)optsavebuf, 1, MC_OPTS_BYTE_COUNT, fp);
+    loadedslots = loadedbytes / 2;
     fclose(fp);
 
     int i = 0;
-    animsflg = optsavebuf[i++];
-    #ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
-        fullscreenflg = optsavebuf[i++];
-        {
-          UINT16 rawGs = optsavebuf[i++];
-          if (rawGs < 10u)
-          {
-            gamespeedflg = (rawGs == 1u) ? MC_GAME_SPEED_VSYNC : MC_GAME_SPEED_60HZ;
-          }
-          else
-          {
-            UINT16 v = (UINT16)(rawGs - 10u);
-            gamespeedflg = (v > MC_GAME_SPEED_60HZ) ? MC_GAME_SPEED_VSYNC : v;
-          }
-        }
-    #endif
-    easiervisualsflg = optsavebuf[i++];
-    musicflg = optsavebuf[i++];
-    sfxflg = optsavebuf[i++];
-    altmenutuneflg = optsavebuf[i++];
-    prefs->shootkey = optsavebuf[i++];
-    prefs->upkey = optsavebuf[i++];
-    prefs->downkey = optsavebuf[i++];
-    prefs->leftkey = optsavebuf[i++];
-    prefs->rightkey = optsavebuf[i++];
-    prefs->jumpkey = optsavebuf[i++];
-    easiershootflg = (loadedbytes >= MC_OPTS_BYTE_COUNT) ? (optsavebuf[i++] ? 1 : 0) : 0;
+    animsflg = optsavebuf[i++] ? 1 : 0;
+#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
+    fullscreenflg = (loadedslots > (size_t)i) ? optsavebuf[i++] : fullscreenflg;
+    if (loadedslots > (size_t)i)
+    {
+      UINT16 rawGs = optsavebuf[i++];
+      if (rawGs < 10u)
+      {
+        gamespeedflg = (rawGs == 1u) ? MC_GAME_SPEED_VSYNC : MC_GAME_SPEED_60HZ;
+      }
+      else
+      {
+        UINT16 v = (UINT16)(rawGs - 10u);
+        gamespeedflg = (v > MC_GAME_SPEED_60HZ) ? MC_GAME_SPEED_VSYNC : v;
+      }
+    }
+#endif
+    easiervisualsflg = (loadedslots > (size_t)i) ? (optsavebuf[i++] ? 1 : 0) : easiervisualsflg;
+    musicflg = (loadedslots > (size_t)i) ? (optsavebuf[i++] ? 1 : 0) : musicflg;
+    sfxflg = (loadedslots > (size_t)i) ? (optsavebuf[i++] ? 1 : 0) : sfxflg;
+    altmenutuneflg = (loadedslots > (size_t)i) ? (optsavebuf[i++] ? 1 : 0) : altmenutuneflg;
+    prefs->shootkey = (loadedslots > (size_t)i) ? optsavebuf[i++] : prefs->shootkey;
+    prefs->upkey = (loadedslots > (size_t)i) ? optsavebuf[i++] : prefs->upkey;
+    prefs->downkey = (loadedslots > (size_t)i) ? optsavebuf[i++] : prefs->downkey;
+    prefs->leftkey = (loadedslots > (size_t)i) ? optsavebuf[i++] : prefs->leftkey;
+    prefs->rightkey = (loadedslots > (size_t)i) ? optsavebuf[i++] : prefs->rightkey;
+    prefs->jumpkey = (loadedslots > (size_t)i) ? optsavebuf[i++] : prefs->jumpkey;
+    easiershootflg = (loadedslots > (size_t)i) ? (optsavebuf[i++] ? 1 : 0) : 0;
 
     if (sfxflg)
     {
@@ -7756,7 +7759,7 @@ HEARTBEAT_FN MC_endsequence(void)
 
   ingameflg = 1;              // from this point onward we are IN the game
   speedrun_state.gametime = 0;
-  for (int i = 0; i < 16; i++)
+  for (int i = 0; i < 17; i++)
   {
     speedrun_state.leveltime[i] = 0;
   }
