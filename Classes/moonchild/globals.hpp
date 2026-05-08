@@ -78,13 +78,13 @@ extern UINT16    vgaflg;
 extern UINT16    animsflg;
 extern UINT16    easiervisualsflg;
 extern UINT16    easiershootflg;
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
 #define MC_GAME_SPEED_VSYNC 0u
 #define MC_GAME_SPEED_50HZ  1u
 #define MC_GAME_SPEED_60HZ  2u
+#ifdef MOONCHILD_DESKTOP_MODE
 extern UINT16    fullscreenflg;
-extern UINT16    gamespeedflg;
 #endif
+extern UINT16    gamespeedflg;
 extern UINT16    musicflg;
 extern UINT16    sfxflg;
 extern UINT16    altmenutuneflg;

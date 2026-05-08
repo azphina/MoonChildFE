@@ -37,7 +37,7 @@ public:
 #endif
 
 private:
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
+#ifdef MOONCHILD_DESKTOP_MODE
     bool SwallowEnterKey = false;
     bool HandleFullscreenHotkey(const SDL_Event& ev);
 #endif

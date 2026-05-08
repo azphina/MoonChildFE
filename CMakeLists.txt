@@ -359,7 +359,7 @@ endif()
 # Backend selection macros
 if(MOONCHILD_WINDOW_SDL3)
     target_compile_definitions(${EXECUTABLE_NAME} PRIVATE MOONCHILD_WINDOW_SDL3)
-    target_compile_definitions(${EXECUTABLE_NAME} PRIVATE MOONCHILD_HAS_DISPLAY_OPTIONS)
+    target_compile_definitions(${EXECUTABLE_NAME} PRIVATE MOONCHILD_DESKTOP_MODE)
 endif()
 
 if(MOONCHILD_RENDERER_OPENGL)

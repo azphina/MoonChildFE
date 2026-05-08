@@ -89,10 +89,10 @@ UINT16 vgaflg=1;
 UINT16 animsflg=1;
 UINT16 easiervisualsflg=0;
 UINT16 easiershootflg=0;
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
+#ifdef MOONCHILD_DESKTOP_MODE
 UINT16 fullscreenflg=1;
-UINT16 gamespeedflg=0;
 #endif
+UINT16 gamespeedflg=0;
 UINT16 musicflg=1;
 UINT16 sfxflg=1;
 UINT16 altmenutuneflg=0;

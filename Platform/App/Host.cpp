@@ -7,9 +7,7 @@
 #include "PlatformConfig.h"
 #include "Resources.h"
 
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
 extern unsigned short gamespeedflg;
-#endif
 
 #define _IN_MAIN
 #include "frm_int.hpp"
@@ -144,12 +142,8 @@ void Host::RunFrame()
 
     PreviousFrameTime = current;
 
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
     const uint64_t tickNs =
         (gamespeedflg == 1u) ? GAME_FRAME_DURATION_NS_50 : GAME_FRAME_DURATION_NS_60;
-#else
-    const uint64_t tickNs = GAME_FRAME_DURATION_NS_60;
-#endif
     const double tickDuration = tickNs / 1e9;
 
     Accumulator += deltaNs;

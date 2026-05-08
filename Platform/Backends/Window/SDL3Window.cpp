@@ -120,7 +120,7 @@ void SDL3Window::DisplaySetFullscreen(bool enabled)
     SDL_SetWindowFullscreen(Window, enabled);
 }
 
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
+#ifdef MOONCHILD_DESKTOP_MODE
 bool SDL3Window::HandleFullscreenHotkey(const SDL_Event& ev)
 {
     if (ev.type != SDL_EVENT_KEY_DOWN && ev.type != SDL_EVENT_KEY_UP)
@@ -215,7 +215,7 @@ void SDL3Window::PumpOSEvents(IInput* sink, bool& outExitRequested)
                 break;
 
             case SDL_EVENT_WINDOW_FOCUS_LOST:
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
+#ifdef MOONCHILD_DESKTOP_MODE
                 SwallowEnterKey = false;
 #endif
                 sink->OnFocusLost();
@@ -223,7 +223,7 @@ void SDL3Window::PumpOSEvents(IInput* sink, bool& outExitRequested)
 
             case SDL_EVENT_KEY_DOWN:
             case SDL_EVENT_KEY_UP:
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
+#ifdef MOONCHILD_DESKTOP_MODE
                 if (HandleFullscreenHotkey(sdlEvent))
                 {
                     break;

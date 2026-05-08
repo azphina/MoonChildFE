@@ -133,7 +133,7 @@ void prep_engine(void);
 void rec_savemap(void);
 void rec_prepmap(void);
 void anim_init(void);
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
+#ifdef MOONCHILD_DESKTOP_MODE
 static void sync_fullscreen(int enabled);
 #endif
 void makeanimglobal(void);
@@ -286,10 +286,10 @@ void menuf121111(void);
 void menuf1211111(void);
 void menuf12111111(void);
 void menuf122(void);
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
+#ifdef MOONCHILD_DESKTOP_MODE
 void menuf1221(void);
-void menuf1222(void);
 #endif
+void menuf1222(void);
 void menuf1223(void);
 void menuf1224(void);
 void menuf123(void);
@@ -614,12 +614,12 @@ MENU_ITEM menu12111111[] =
   { 0,0,0}
 };
 
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
-char *fullscreenontxt  = "+ FULLSCREEN : ON   ";
-char *fullscreenofftxt = "  FULLSCREEN : OFF  ";
 char *gamespeedmenu_vs  = " GAME SPEED : VSYNC ";
 char *gamespeedmenu_50  = "+GAME SPEED : 50HZ  ";
 char *gamespeedmenu_60  = "+GAME SPEED : 60HZ  ";
+#ifdef MOONCHILD_DESKTOP_MODE
+char *fullscreenontxt  = "+ FULLSCREEN : ON   ";
+char *fullscreenofftxt = "  FULLSCREEN : OFF  ";
 #endif
 
 char *animsontxt    = "+   MOVIES : ON     ";
@@ -629,14 +629,15 @@ char *easyvisofftxt = "   SAFE GFX : OFF   ";
 
 MENU_ITEM menu122[] =
 {
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
+#ifdef MOONCHILD_DESKTOP_MODE
   {   5, menuf1221, fullscreenontxt },
   {   7, menuf1222, gamespeedmenu_vs },
   {   9, menuf1223, easyvisontxt },
   {  11, menuf1224, "=      RETURN       "},
 #else
-  {   6, menuf1223, easyvisontxt },
-  {   8, menuf1224, "=      RETURN       "},
+  {   5, menuf1222, gamespeedmenu_vs },
+  {   7, menuf1223, easyvisontxt },
+  {   9, menuf1224, "=      RETURN       "},
 #endif
   { 0,0,0}
 };
@@ -859,7 +860,7 @@ HEARTBEAT_FN framework_InitGame(Cvideo *newvideo, Caudio *newaudio, Ctimer *newt
   timer  = newtimer;
   movie  = newmovie;
 
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
+#ifdef MOONCHILD_DESKTOP_MODE
   DisplayBridge::SetFullscreenChangeCallback(sync_fullscreen);
 #endif
 
@@ -1010,15 +1011,14 @@ void load_highscores(void)
 
 }
 
-
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
+#ifdef MOONCHILD_DESKTOP_MODE
   #define MC_OPTS_SLOT_COUNT 14
 #else
-  #define MC_OPTS_SLOT_COUNT 12
+  #define MC_OPTS_SLOT_COUNT 13
 #endif
 #define MC_OPTS_BYTE_COUNT (MC_OPTS_SLOT_COUNT * 2)
 
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
+#ifdef MOONCHILD_DESKTOP_MODE
 static void sync_fullscreen(int enabled)
 {
   fullscreenflg = enabled ? 1 : 0;
@@ -1030,10 +1030,10 @@ void save_options(void)
 {
   int i = 0;
   optsavebuf[i++] = animsflg;
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
+#ifdef MOONCHILD_DESKTOP_MODE
   optsavebuf[i++] = fullscreenflg;
-  optsavebuf[i++] = (UINT16)(gamespeedflg + 10u);
 #endif
+  optsavebuf[i++] = (UINT16)(gamespeedflg + 10u);
   optsavebuf[i++] = easiervisualsflg;
   optsavebuf[i++] = musicflg;
   optsavebuf[i++] = sfxflg;
@@ -1066,8 +1066,9 @@ void load_options(void)
 
     int i = 0;
     animsflg = optsavebuf[i++] ? 1 : 0;
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
+#ifdef MOONCHILD_DESKTOP_MODE
     fullscreenflg = (loadedslots > (size_t)i) ? optsavebuf[i++] : fullscreenflg;
+#endif
     if (loadedslots > (size_t)i)
     {
       UINT16 rawGs = optsavebuf[i++];
@@ -1081,7 +1082,6 @@ void load_options(void)
         gamespeedflg = (v > MC_GAME_SPEED_60HZ) ? MC_GAME_SPEED_VSYNC : v;
       }
     }
-#endif
     easiervisualsflg = (loadedslots > (size_t)i) ? (optsavebuf[i++] ? 1 : 0) : easiervisualsflg;
     musicflg = (loadedslots > (size_t)i) ? (optsavebuf[i++] ? 1 : 0) : musicflg;
     sfxflg = (loadedslots > (size_t)i) ? (optsavebuf[i++] ? 1 : 0) : sfxflg;
@@ -1112,17 +1112,28 @@ void load_options(void)
     }
   }
 
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
-  menu122[0].menutext = fullscreenflg ? fullscreenontxt : fullscreenofftxt;
-  menu122[1].menutext = (gamespeedflg == MC_GAME_SPEED_50HZ) ? gamespeedmenu_50
-                      : (gamespeedflg == MC_GAME_SPEED_60HZ) ? gamespeedmenu_60
-                                                            : gamespeedmenu_vs;
-  menu122[2].menutext = easiervisualsflg ? easyvisontxt : easyvisofftxt;
-  DisplayBridge::SetFullscreen(fullscreenflg ? 1 : 0);
-  DisplayBridge::SetVSync(gamespeedflg == MC_GAME_SPEED_VSYNC ? 1 : 0);
+  const int gamespeedSlot =
+#ifdef MOONCHILD_DESKTOP_MODE
+      1;
 #else
-  menu122[0].menutext = easiervisualsflg ? easyvisontxt : easyvisofftxt;
+      0;
 #endif
+  const int easierSlot =
+#ifdef MOONCHILD_DESKTOP_MODE
+      2;
+#else
+      1;
+#endif
+
+#ifdef MOONCHILD_DESKTOP_MODE
+  menu122[0].menutext = fullscreenflg ? fullscreenontxt : fullscreenofftxt;
+  DisplayBridge::SetFullscreen(fullscreenflg ? 1 : 0);
+#endif
+  menu122[gamespeedSlot].menutext = (gamespeedflg == MC_GAME_SPEED_50HZ) ? gamespeedmenu_50
+                              : (gamespeedflg == MC_GAME_SPEED_60HZ) ? gamespeedmenu_60
+                                                                    : gamespeedmenu_vs;
+  menu122[easierSlot].menutext = easiervisualsflg ? easyvisontxt : easyvisofftxt;
+  DisplayBridge::SetVSync(gamespeedflg == MC_GAME_SPEED_VSYNC ? 1 : 0);
   menu123[2].menutext = altmenutuneflg ? altmenuontxt : altmenuofftxt;
   menu1243[0].menutext = speedrun_state.running ? speedrun_toggle_on : speedrun_toggle_off;
   menu1243[1].menutext = easiershootflg ? easiershoot_on : easiershoot_off;
@@ -2666,8 +2677,6 @@ HEARTBEAT_FN MC_heartbeat(void)
   mouse_handling();
 ////  object_remember(&player1);
 //      object_remember(&player2);
-
-    video->ShowMouseCursor();
   object_visualise(&player1);
 
   fullversion_display();
@@ -7443,7 +7452,7 @@ void menuf122(void)
   menuleavefunc = (HEARTBEAT_FN) MC_buildmenu;
 }
 
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
+#ifdef MOONCHILD_DESKTOP_MODE
 void menuf1221(void)
 {
   const int fullscreenSlot = 0;
@@ -7462,10 +7471,16 @@ void menuf1221(void)
   start_afterbuilditem = fullscreenSlot;
   menuleavefunc = (HEARTBEAT_FN) MC_buildmenu;
 }
+#endif
 
 void menuf1222(void)
 {
-  const int gamespeedSlot = 1;
+  const int gamespeedSlot =
+#ifdef MOONCHILD_DESKTOP_MODE
+      1;
+#else
+      0;
+#endif
 
   gamespeedflg = (UINT16)((gamespeedflg + 1u) % 3u);
   menu122[gamespeedSlot].menutext =
@@ -7476,16 +7491,15 @@ void menuf1222(void)
   start_afterbuilditem = gamespeedSlot;
   menuleavefunc = (HEARTBEAT_FN) MC_buildmenu;
 }
-#endif
 
 void menuf1223(void)
 {
   easiervisualsflg ^= 1;
 
-#ifdef MOONCHILD_HAS_DISPLAY_OPTIONS
+#ifdef MOONCHILD_DESKTOP_MODE
   const int easierSlot = 2;
 #else
-  const int easierSlot = 0;
+  const int easierSlot = 1;
 #endif
 
   if (easiervisualsflg)
