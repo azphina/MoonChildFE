@@ -12,6 +12,8 @@ int g_MouseXDown;
 int g_MouseYDown;
 int g_MouseXCurrent;
 int g_MouseYCurrent;
+int g_MouseDeltaX;
+int g_MouseDeltaY;
 
 unsigned short* SettingsPic;
 

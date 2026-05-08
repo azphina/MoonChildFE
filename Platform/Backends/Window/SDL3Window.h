@@ -25,6 +25,7 @@ public:
     SDL_Window* GetNativeWindow() const { return Window; }
 
     void DisplaySetFullscreen(bool enabled) override;
+    void SetRelativeMouseMode(bool enabled) override;
 
     void PumpOSEvents(IInput* sink, bool& outExitRequested) override;
 
@@ -43,6 +44,7 @@ private:
 #endif
 
     SDL_Window* Window = nullptr;
+    bool RelativeMouseMode = false;
 #ifdef MOONCHILD_USE_OPENGL
     SDL_GLContext GlContext = nullptr;
 #endif

@@ -55,6 +55,8 @@ public:
     virtual void Destroy() = 0;
 
     virtual void OnKeyEvent(int nativeKeyCode, bool isDown, bool isRepeat) = 0;
+    virtual void OnMouseMovement(float x, float y, float xrel, float yrel) = 0;
+    virtual void OnMouseButton(int button, bool isDown, float x, float y) = 0;
 
     virtual void OnGamepadConnected(int instanceId) = 0;
     virtual void OnGamepadDisconnected(int instanceId) = 0;

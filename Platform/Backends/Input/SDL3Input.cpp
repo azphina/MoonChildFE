@@ -1,8 +1,17 @@
 #include "SDL3Input.h"
 
+#include <globals.hpp>
+
 #include <cstdio>
 
 static constexpr int AXIS_THRESHOLD = 16000;
+
+extern int g_MouseFlg;
+extern int g_MouseActualFlg;
+extern int g_MouseXDown;
+extern int g_MouseYDown;
+extern int g_MouseDeltaX;
+extern int g_MouseDeltaY;
 
 SDL3Input::SDL3Input() = default;
 
@@ -45,6 +54,14 @@ bool SDL3Input::Init()
 void SDL3Input::Destroy()
 {
     ClearAllSources();
+    g_MouseFlg = 0;
+    g_MouseActualFlg = 0;
+    g_MouseXDown = 0;
+    g_MouseYDown = 0;
+    g_MouseDeltaX = 0;
+    g_MouseDeltaY = 0;
+    MouseDeltaRemainderX = 0.0f;
+    MouseDeltaRemainderY = 0.0f;
     if (Gamepad != nullptr)
     {
         SDL_CloseGamepad(Gamepad);
@@ -112,15 +129,21 @@ void SDL3Input::TranslateGamepadAxis(int axis, int& outNegativeCode, int& outPos
     switch (axis)
     {
         case SDL_GAMEPAD_AXIS_LEFTX:
+        {
             outNegativeCode = CB_LEFT;
             outPositiveCode = CB_RIGHT;
             break;
+        }
         case SDL_GAMEPAD_AXIS_LEFTY:
+        {
             outNegativeCode = CB_UP;
             outPositiveCode = CB_DOWN;
             break;
+        }
         default:
+        {
             break;
+        }
     }
 }
 
@@ -152,6 +175,60 @@ void SDL3Input::OnKeyEvent(int nativeKeyCode, bool isDown, bool isRepeat)
     }
     const uint32_t sourceId = INPUT_SOURCE_KEY | static_cast<uint32_t>(nativeKeyCode & INPUT_SOURCE_CODE_MASK);
     SetSource(sourceId, code, isDown);
+}
+
+void SDL3Input::OnMouseMovement(float x, float y, float xrel, float yrel)
+{
+    g_MouseXCurrent = static_cast<int>(x);
+    g_MouseYCurrent = static_cast<int>(y);
+    g_MouseFlg = 0;
+
+    const float deltaX = xrel + MouseDeltaRemainderX;
+    const float deltaY = yrel + MouseDeltaRemainderY;
+    const int wholeDeltaX = static_cast<int>(deltaX);
+    const int wholeDeltaY = static_cast<int>(deltaY);
+
+    MouseDeltaRemainderX = deltaX - static_cast<float>(wholeDeltaX);
+    MouseDeltaRemainderY = deltaY - static_cast<float>(wholeDeltaY);
+
+    g_MouseDeltaX += wholeDeltaX;
+    g_MouseDeltaY += wholeDeltaY;
+}
+
+void SDL3Input::OnMouseButton(int button, bool isDown, float x, float y)
+{
+    g_MouseXCurrent = static_cast<int>(x);
+    g_MouseYCurrent = static_cast<int>(y);
+
+    switch (button)
+    {
+        case SDL_BUTTON_LEFT:
+        {
+            mouselbut = isDown ? 1 : 0;
+            mouselchng = 1;
+            g_MouseActualFlg = isDown ? 1 : 0;
+            if (isDown)
+            {
+                g_MouseXDown = g_MouseXCurrent;
+                g_MouseYDown = g_MouseYCurrent;
+            }
+            else
+            {
+                g_MouseFlg = 1;
+            }
+            break;
+        }
+        case SDL_BUTTON_RIGHT:
+        {
+            mouserbut = isDown ? 1 : 0;
+            mouserchng = 1;
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
 }
 
 void SDL3Input::OnGamepadConnected(int instanceId)
@@ -216,6 +293,18 @@ void SDL3Input::OnGamepadAxis(int instanceId, int axis, int value)
 void SDL3Input::OnFocusLost()
 {
     ClearAllSources();
+    g_MouseFlg = 0;
+    g_MouseActualFlg = 0;
+    g_MouseXDown = 0;
+    g_MouseYDown = 0;
+    g_MouseDeltaX = 0;
+    g_MouseDeltaY = 0;
+    MouseDeltaRemainderX = 0.0f;
+    MouseDeltaRemainderY = 0.0f;
+    mouselbut = 0;
+    mouserbut = 0;
+    mouselchng = 0;
+    mouserchng = 0;
 }
 
 bool SDL3Input::PollNext(InputEvent& out)

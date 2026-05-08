@@ -22,6 +22,8 @@ extern int g_MouseFlg;
 extern int g_MouseActualFlg;
 extern int g_MouseXDown;
 extern int g_MouseYDown;
+extern int g_MouseDeltaX;
+extern int g_MouseDeltaY;
 
 
 int	  FirstTimeShowCredzFlg;
@@ -1569,6 +1571,8 @@ void killlevel(void)
   free(patterntab);
 
   levelloadedflg = 0;
+  
+  editflg = 0;
 }
 
 
@@ -6217,11 +6221,12 @@ void mouse_handling(void)
 
   if (editflg)
     {
-        if(g_MouseFlg)
+        if(g_MouseDeltaX || g_MouseDeltaY)
         {
-      hoi->x += (mousex-((prefs->reso == PREFS_LORES) ? 160 : 320 ))/4;
-      hoi->y += (mousey-((prefs->reso == PREFS_LORES) ? 120 : 240 ))/4;
-        }      
+            hoi->x += g_MouseDeltaX;
+            hoi->y += g_MouseDeltaY;
+        }
+
       if ((INT16) hoi->x < 0)
   {
     hoi->x = 0;
@@ -6249,9 +6254,8 @@ void mouse_handling(void)
     }
   else
     {
-      globmousex += (mousex-((prefs->reso == PREFS_LORES) ? 160 : 320 ));
-      globmousey += (mousey-((prefs->reso == PREFS_LORES) ? 120 : 240 ));
-
+      globmousex += g_MouseDeltaX;
+      globmousey += g_MouseDeltaY;
     }
 }
 

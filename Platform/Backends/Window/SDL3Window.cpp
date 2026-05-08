@@ -17,6 +17,22 @@ static void* LoadSdlGlProc(const char* name)
 }
 #endif
 
+static void ScaleCoordinates(SDL_Window* window, float windowX, float windowY, float& outX, float& outY)
+{
+    int windowWidth = 0;
+    int windowHeight = 0;
+    SDL_GetWindowSize(window, &windowWidth, &windowHeight);
+    if (windowWidth <= 0 || windowHeight <= 0)
+    {
+        outX = windowX;
+        outY = windowY;
+        return;
+    }
+
+    outX = windowX * (640.0f / static_cast<float>(windowWidth));
+    outY = windowY * (480.0f / static_cast<float>(windowHeight));
+}
+
 SDL3Window::SDL3Window() = default;
 
 SDL3Window::~SDL3Window()
@@ -120,6 +136,23 @@ void SDL3Window::DisplaySetFullscreen(bool enabled)
     SDL_SetWindowFullscreen(Window, enabled);
 }
 
+void SDL3Window::SetRelativeMouseMode(bool enabled)
+{
+    if (RelativeMouseMode == enabled)
+    {
+        return;
+    }
+
+    if (SDL_SetWindowRelativeMouseMode(Window, enabled))
+    {
+        RelativeMouseMode = enabled;
+        if (!RelativeMouseMode && (SDL_GetWindowFlags(Window) & SDL_WINDOW_FULLSCREEN) == 0)
+        {
+            SDL_ShowCursor();
+        }
+    }
+}
+
 #ifdef MOONCHILD_DESKTOP_MODE
 bool SDL3Window::HandleFullscreenHotkey(const SDL_Event& ev)
 {
@@ -205,24 +238,34 @@ void SDL3Window::PumpOSEvents(IInput* sink, bool& outExitRequested)
         switch (sdlEvent.type)
         {
             case SDL_EVENT_WINDOW_ENTER_FULLSCREEN:
+            {
                 SDL_HideCursor();
                 DisplayBridge::NotifyFullscreenChange(1);
                 break;
+            }
 
             case SDL_EVENT_WINDOW_LEAVE_FULLSCREEN:
-                SDL_ShowCursor();
+            {
+                if (!RelativeMouseMode)
+                {
+                    SDL_ShowCursor();
+                }
                 DisplayBridge::NotifyFullscreenChange(0);
                 break;
+            }
 
             case SDL_EVENT_WINDOW_FOCUS_LOST:
+            {
 #ifdef MOONCHILD_DESKTOP_MODE
                 SwallowEnterKey = false;
 #endif
                 sink->OnFocusLost();
                 break;
+            }
 
             case SDL_EVENT_KEY_DOWN:
             case SDL_EVENT_KEY_UP:
+            {
 #ifdef MOONCHILD_DESKTOP_MODE
                 if (HandleFullscreenHotkey(sdlEvent))
                 {
@@ -233,30 +276,67 @@ void SDL3Window::PumpOSEvents(IInput* sink, bool& outExitRequested)
                                  sdlEvent.type == SDL_EVENT_KEY_DOWN,
                                  sdlEvent.key.repeat != 0);
                 break;
+            }
+
+            case SDL_EVENT_MOUSE_MOTION:
+            {
+                float gameX = 0.0f;
+                float gameY = 0.0f;
+                float gameDeltaX = 0.0f;
+                float gameDeltaY = 0.0f;
+                ScaleCoordinates(Window, sdlEvent.motion.x, sdlEvent.motion.y, gameX, gameY);
+                ScaleCoordinates(Window, sdlEvent.motion.xrel, sdlEvent.motion.yrel, gameDeltaX, gameDeltaY);
+                sink->OnMouseMovement(gameX, gameY, gameDeltaX, gameDeltaY);
+                break;
+            }
+
+            case SDL_EVENT_MOUSE_BUTTON_DOWN:
+            case SDL_EVENT_MOUSE_BUTTON_UP:
+            {
+                float gameX = 0.0f;
+                float gameY = 0.0f;
+                ScaleCoordinates(Window, sdlEvent.button.x, sdlEvent.button.y, gameX, gameY);
+                sink->OnMouseButton(static_cast<int>(sdlEvent.button.button),
+                                    sdlEvent.type == SDL_EVENT_MOUSE_BUTTON_DOWN,
+                                    gameX,
+                                    gameY);
+                break;
+            }
 
             case SDL_EVENT_GAMEPAD_ADDED:
+            {
                 sink->OnGamepadConnected(static_cast<int>(sdlEvent.gdevice.which));
                 break;
+            }
 
             case SDL_EVENT_GAMEPAD_REMOVED:
+            {
                 sink->OnGamepadDisconnected(static_cast<int>(sdlEvent.gdevice.which));
                 break;
+            }
 
             case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
             case SDL_EVENT_GAMEPAD_BUTTON_UP:
+            {
                 sink->OnGamepadButton(static_cast<int>(sdlEvent.gbutton.which),
                                       sdlEvent.gbutton.button,
                                       sdlEvent.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN);
                 break;
+            }
 
             case SDL_EVENT_GAMEPAD_AXIS_MOTION:
+            {
                 sink->OnGamepadAxis(static_cast<int>(sdlEvent.gaxis.which),
                                     sdlEvent.gaxis.axis,
                                     sdlEvent.gaxis.value);
                 break;
+            }
 
             default:
+            {
                 break;
+            }
         }
     }
 }
+

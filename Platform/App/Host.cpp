@@ -8,6 +8,12 @@
 #include "Resources.h"
 
 extern unsigned short gamespeedflg;
+extern unsigned short editflg;
+extern int g_MouseFlg;
+extern int g_MouseDeltaX;
+extern int g_MouseDeltaY;
+extern unsigned short mouselchng;
+extern unsigned short mouserchng;
 
 #define _IN_MAIN
 #include "frm_int.hpp"
@@ -129,6 +135,7 @@ void Host::RunFrame()
     }
 
     bool exitRequested = false;
+    Backends.Window->SetRelativeMouseMode(editflg != 0);
     Backends.Window->PumpOSEvents(Backends.Input.get(), exitRequested);
     if (exitRequested)
     {
@@ -245,6 +252,13 @@ void Host::TickFramework(double tickDuration)
     MovieBridge::Tick(tickDuration);
 
     heartbeat = reinterpret_cast<HEARTBEAT_FN>(heartbeat());
+
+    g_MouseFlg = 0;
+    g_MouseDeltaX = 0;
+    g_MouseDeltaY = 0;
+    mouselchng = 0;
+    mouserchng = 0;
+
     if (heartbeat == nullptr)
     {
         Running = false;

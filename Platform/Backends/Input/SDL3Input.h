@@ -17,6 +17,8 @@ public:
     void Destroy() override;
 
     void OnKeyEvent(int nativeKeyCode, bool isDown, bool isRepeat) override;
+    void OnMouseMovement(float x, float y, float xrel, float yrel) override;
+    void OnMouseButton(int button, bool isDown, float x, float y) override;
     void OnGamepadConnected(int instanceId) override;
     void OnGamepadDisconnected(int instanceId) override;
     void OnGamepadButton(int instanceId, int button, bool isDown) override;
@@ -35,6 +37,8 @@ private:
 
     SDL_Gamepad* Gamepad = nullptr;
     SDL_JoystickID GamepadId = 0;
+    float MouseDeltaRemainderX = 0.0f;
+    float MouseDeltaRemainderY = 0.0f;
 
     std::deque<InputEvent> Queue;
 };
