@@ -26,6 +26,12 @@ static constexpr int CB_ACTION = 245;
 static constexpr int CB_START  = 246;
 static constexpr int CB_BACK   = 247;
 
+enum InputMouseButton : int
+{
+    INPUT_MOUSE_BUTTON_LEFT = 1,
+    INPUT_MOUSE_BUTTON_RIGHT = 2
+};
+
 enum InputSourceKind : uint32_t
 {
     INPUT_SOURCE_NONE              = 0x00000000u,

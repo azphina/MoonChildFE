@@ -6,6 +6,13 @@
 #include <deque>
 #include <unordered_map>
 
+extern int g_MouseFlg;
+extern int g_MouseActualFlg;
+extern int g_MouseXDown;
+extern int g_MouseYDown;
+extern int g_MouseDeltaX;
+extern int g_MouseDeltaY;
+
 namespace InputBridge
 {
     static constexpr int REPEAT_DELAY_FRAMES = 30;
@@ -31,6 +38,20 @@ namespace InputBridge
     static bool IsValidGameKey(int gameKeyCode)
     {
         return gameKeyCode > 0 && gameKeyCode < 256;
+    }
+
+    static void ResetMouseState()
+    {
+        g_MouseFlg = 0;
+        g_MouseActualFlg = 0;
+        g_MouseXDown = 0;
+        g_MouseYDown = 0;
+        g_MouseDeltaX = 0;
+        g_MouseDeltaY = 0;
+        mouselbut = 0;
+        mouserbut = 0;
+        mouselchng = 0;
+        mouserchng = 0;
     }
 
     static void ClearState()
@@ -61,12 +82,66 @@ namespace InputBridge
     {
         InputBackend = input;
         ClearState();
+        ResetMouseState();
     }
 
     void Detach()
     {
         InputBackend = nullptr;
         ClearState();
+        ResetMouseState();
+    }
+
+    void OnMouseMovement(int x, int y, int deltaX, int deltaY)
+    {
+        g_MouseXCurrent = x;
+        g_MouseYCurrent = y;
+        g_MouseFlg = 0;
+        g_MouseDeltaX += deltaX;
+        g_MouseDeltaY += deltaY;
+    }
+
+    void OnMouseButton(int button, bool isDown, int x, int y)
+    {
+        g_MouseXCurrent = x;
+        g_MouseYCurrent = y;
+
+        switch (button)
+        {
+            case INPUT_MOUSE_BUTTON_LEFT:
+            {
+                mouselbut = isDown ? 1 : 0;
+                mouselchng = 1;
+                g_MouseActualFlg = isDown ? 1 : 0;
+                if (isDown)
+                {
+                    g_MouseXDown = x;
+                    g_MouseYDown = y;
+                }
+                else
+                {
+                    g_MouseFlg = 1;
+                }
+                break;
+            }
+
+            case INPUT_MOUSE_BUTTON_RIGHT:
+            {
+                mouserbut = isDown ? 1 : 0;
+                mouserchng = 1;
+                break;
+            }
+
+            default:
+            {
+                break;
+            }
+        }
+    }
+
+    void OnFocusLost()
+    {
+        ResetMouseState();
     }
 
     void Tick()

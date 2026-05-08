@@ -1,17 +1,10 @@
 #include "SDL3Input.h"
 
-#include <globals.hpp>
+#include "InputBridge.h"
 
 #include <cstdio>
 
 static constexpr int AXIS_THRESHOLD = 16000;
-
-extern int g_MouseFlg;
-extern int g_MouseActualFlg;
-extern int g_MouseXDown;
-extern int g_MouseYDown;
-extern int g_MouseDeltaX;
-extern int g_MouseDeltaY;
 
 SDL3Input::SDL3Input() = default;
 
@@ -54,12 +47,7 @@ bool SDL3Input::Init()
 void SDL3Input::Destroy()
 {
     ClearAllSources();
-    g_MouseFlg = 0;
-    g_MouseActualFlg = 0;
-    g_MouseXDown = 0;
-    g_MouseYDown = 0;
-    g_MouseDeltaX = 0;
-    g_MouseDeltaY = 0;
+    InputBridge::OnFocusLost();
     MouseDeltaRemainderX = 0.0f;
     MouseDeltaRemainderY = 0.0f;
     if (Gamepad != nullptr)
@@ -179,10 +167,6 @@ void SDL3Input::OnKeyEvent(int nativeKeyCode, bool isDown, bool isRepeat)
 
 void SDL3Input::OnMouseMovement(float x, float y, float xrel, float yrel)
 {
-    g_MouseXCurrent = static_cast<int>(x);
-    g_MouseYCurrent = static_cast<int>(y);
-    g_MouseFlg = 0;
-
     const float deltaX = xrel + MouseDeltaRemainderX;
     const float deltaY = yrel + MouseDeltaRemainderY;
     const int wholeDeltaX = static_cast<int>(deltaX);
@@ -191,44 +175,36 @@ void SDL3Input::OnMouseMovement(float x, float y, float xrel, float yrel)
     MouseDeltaRemainderX = deltaX - static_cast<float>(wholeDeltaX);
     MouseDeltaRemainderY = deltaY - static_cast<float>(wholeDeltaY);
 
-    g_MouseDeltaX += wholeDeltaX;
-    g_MouseDeltaY += wholeDeltaY;
+    InputBridge::OnMouseMovement(static_cast<int>(x),
+                                 static_cast<int>(y),
+                                 wholeDeltaX,
+                                 wholeDeltaY);
 }
 
 void SDL3Input::OnMouseButton(int button, bool isDown, float x, float y)
 {
-    g_MouseXCurrent = static_cast<int>(x);
-    g_MouseYCurrent = static_cast<int>(y);
-
+    int bridgeButton = 0;
     switch (button)
     {
         case SDL_BUTTON_LEFT:
         {
-            mouselbut = isDown ? 1 : 0;
-            mouselchng = 1;
-            g_MouseActualFlg = isDown ? 1 : 0;
-            if (isDown)
-            {
-                g_MouseXDown = g_MouseXCurrent;
-                g_MouseYDown = g_MouseYCurrent;
-            }
-            else
-            {
-                g_MouseFlg = 1;
-            }
+            bridgeButton = INPUT_MOUSE_BUTTON_LEFT;
             break;
         }
+
         case SDL_BUTTON_RIGHT:
         {
-            mouserbut = isDown ? 1 : 0;
-            mouserchng = 1;
+            bridgeButton = INPUT_MOUSE_BUTTON_RIGHT;
             break;
         }
+
         default:
         {
             break;
         }
     }
+
+    InputBridge::OnMouseButton(bridgeButton, isDown, static_cast<int>(x), static_cast<int>(y));
 }
 
 void SDL3Input::OnGamepadConnected(int instanceId)
@@ -293,18 +269,9 @@ void SDL3Input::OnGamepadAxis(int instanceId, int axis, int value)
 void SDL3Input::OnFocusLost()
 {
     ClearAllSources();
-    g_MouseFlg = 0;
-    g_MouseActualFlg = 0;
-    g_MouseXDown = 0;
-    g_MouseYDown = 0;
-    g_MouseDeltaX = 0;
-    g_MouseDeltaY = 0;
+    InputBridge::OnFocusLost();
     MouseDeltaRemainderX = 0.0f;
     MouseDeltaRemainderY = 0.0f;
-    mouselbut = 0;
-    mouserbut = 0;
-    mouselchng = 0;
-    mouserchng = 0;
 }
 
 bool SDL3Input::PollNext(InputEvent& out)
