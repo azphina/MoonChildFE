@@ -35,7 +35,6 @@ set(MOONCHILD_AUDIO_BACKEND "${MOONCHILD_AUDIO_BACKEND_DEFAULT}" CACHE STRING "A
 set_property(CACHE MOONCHILD_AUDIO_BACKEND PROPERTY STRINGS SDL3)
 
 # Build options
-option(MOONCHILD_ENABLE_EDITOR "Enable the level editor" OFF)
 option(MOONCHILD_VENDORED_SDL3 "Use vendored SDL3 library" ON)
 option(MOONCHILD_VENDORED_ZLIB "Use vendored zlib library" ON)
 option(MOONCHILD_VENDORED_GAMECONTROLLERDB "Use vendored SDL_GameControllerDB" ON)
@@ -329,10 +328,6 @@ if(WIN32)
     add_executable(${EXECUTABLE_NAME} WIN32 ${MOONCHILD_SOURCES})
 else()
     add_executable(${EXECUTABLE_NAME} MACOSX_BUNDLE ${MOONCHILD_SOURCES})
-endif()
-
-if(MOONCHILD_ENABLE_EDITOR)
-    target_compile_definitions(${EXECUTABLE_NAME} PRIVATE EDITOR=1)
 endif()
 
 target_include_directories(${EXECUTABLE_NAME} PRIVATE

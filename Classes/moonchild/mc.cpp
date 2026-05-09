@@ -43,9 +43,9 @@ int	  FirstTimeShowCredzFlg;
 #define DISCARD_UNUSED_PATS
 
 
-// if defined the editor is ready to go (can also be set from CMake now!)
+// if defined the editor is ready to go
 
-//#define EDITOR
+#define EDITOR
 
 
 // if defined you're able to grab screenshots from movies and game!
@@ -5502,6 +5502,7 @@ void glob_init(void)
   player1.lives = 3;
   maxlevel = 0;
   cheatmode = 0;
+  editunlock = 0;
 
   log_out("calcing a 256 sine");
   for (i=0; i<256; i++)
@@ -5839,8 +5840,11 @@ void check_keys(void)
     {
 #ifndef DEMOVERSION
 #ifdef EDITOR
-      editflg ^= 1;
       keytab['E'] = 0;
+      if (editunlock)
+      {
+        editflg ^= 1;
+      }
 #endif
 #endif
     }
@@ -7418,6 +7422,25 @@ void menuf12111111(void)
   commit_key_remap();
   menupoint = menu12;
   menuleavefunc = (HEARTBEAT_FN) MC_buildmenu;
+
+#ifdef EDITOR
+  if (prefs->jumpkey  == 'E' &&
+      prefs->shootkey == 'D' &&
+      prefs->upkey    == 'I' &&
+      prefs->downkey  == 'T' &&
+      prefs->leftkey  == 'O' &&
+      prefs->rightkey == 'R')
+  {
+    editunlock = 1;
+    prefs->jumpkey = 38;
+    prefs->shootkey = 32;
+    prefs->leftkey = 37;
+    prefs->rightkey = 39;
+    prefs->downkey = 40;
+    prefs->upkey = 38;
+    return;
+  }
+#endif
 
   if (prefs->jumpkey  != 'C') return;
   if (prefs->shootkey != 'H') return;

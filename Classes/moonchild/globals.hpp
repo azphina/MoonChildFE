@@ -62,6 +62,7 @@ extern UINT32 blackdiamondcollocations[13][7]; //7 per level... 13 levels
 
 
 extern UINT16    editflg;            /* we start of in the editor */
+extern UINT16    editunlock;
 extern UINT16    selstartx;
 extern UINT16    selstarty;
 extern UINT16    selendx;

@@ -71,6 +71,7 @@ UINT16 clipbry = 480;
 
 UINT16 sokomoved;
 UINT16 editflg = 0;            /* we don't start of in the editor */
+UINT16 editunlock = 0;
 UINT16 selstartx;
 UINT16 selstarty;
 UINT16 selendx;
